@@ -1,0 +1,98 @@
+{
+  "brand_name": "The Kind Truth",
+  "handle": "@thekind.truth",
+  "tagline": "gentle words, honest ones",
+  "canvas": {
+    "w": 1080,
+    "h": 1350
+  },
+  "fonts": {
+    "quote": "assets/fonts/Lora-Variable.ttf",
+    "quote_italic": "assets/fonts/Lora-Italic-Variable.ttf",
+    "ui": "assets/fonts/Poppins-Medium.ttf",
+    "ui_bold": "assets/fonts/Poppins-Bold.ttf"
+  },
+  "palettes": [
+    {
+      "name": "dawn",
+      "bg": [
+        "#FFE9D6",
+        "#FFC9B0"
+      ],
+      "ink": "#3A2A22",
+      "muted": "#8A6A58"
+    },
+    {
+      "name": "sage",
+      "bg": [
+        "#E7F0E6",
+        "#C3DAC4"
+      ],
+      "ink": "#26372A",
+      "muted": "#5F7A63"
+    },
+    {
+      "name": "dusk",
+      "bg": [
+        "#E9E4F5",
+        "#C9BEEA"
+      ],
+      "ink": "#2E2745",
+      "muted": "#6A5F92"
+    },
+    {
+      "name": "linen",
+      "bg": [
+        "#FAF6EF",
+        "#EDE2D1"
+      ],
+      "ink": "#3B332A",
+      "muted": "#8A7B66"
+    },
+    {
+      "name": "sky",
+      "bg": [
+        "#E4F1F7",
+        "#BFDCEC"
+      ],
+      "ink": "#1F3644",
+      "muted": "#5B7B8F"
+    },
+    {
+      "name": "blush",
+      "bg": [
+        "#FDECEF",
+        "#F6CBD6"
+      ],
+      "ink": "#43262E",
+      "muted": "#94636F"
+    },
+    {
+      "name": "sand",
+      "bg": [
+        "#FFF4E4",
+        "#F3DCBC"
+      ],
+      "ink": "#3E3226",
+      "muted": "#8D775A"
+    }
+  ],
+  "layout": {
+    "margin_x": 130,
+    "quote_box_top": 330,
+    "quote_box_bottom": 1120,
+    "max_font": 100,
+    "min_font": 40,
+    "line_spacing": 1.34,
+    "grain": 5
+  },
+  "instagram": {
+    "ig_user_id": "17841475193055501",
+    "profile_url": "https://www.instagram.com/thekind.truth/"
+  },
+  "github": {
+    "repo": "shridevihakkak-prog/the-kind-truth",
+    "branch": "main",
+    "raw_base": "https://raw.githubusercontent.com/shridevihakkak-prog/the-kind-truth"
+  }
+}
