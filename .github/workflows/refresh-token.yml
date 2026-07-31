@@ -1,0 +1,36 @@
+name: Refresh Instagram token
+
+# Long-lived Instagram tokens expire after ~60 days. This is the single most
+# common reason these pipelines die silently. Runs monthly, exchanges the token
+# and writes the new one straight back into GitHub Secrets.
+#
+# NOT needed if the token was issued via a Meta System User — those don't expire.
+#
+# Secrets required: IG_ACCESS_TOKEN, GH_PAT (fine-grained, secrets:write on this repo)
+
+on:
+  schedule: [{ cron: "0 3 1 * *" }]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Exchange for a fresh 60-day token
+        id: refresh
+        run: |
+          NEW=$(curl -s "https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=${{ secrets.IG_ACCESS_TOKEN }}" | jq -r .access_token)
+          if [ "$NEW" = "null" ] || [ -z "$NEW" ]; then
+            echo "::error::token refresh failed — reissue manually in Meta before it expires"
+            exit 1
+          fi
+          echo "::add-mask::$NEW"
+          echo "token=$NEW" >> $GITHUB_OUTPUT
+
+      - name: Store it back in GitHub Secrets
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: gh secret set IG_ACCESS_TOKEN --body "${{ steps.refresh.outputs.token }}" --repo "$GITHUB_REPOSITORY"

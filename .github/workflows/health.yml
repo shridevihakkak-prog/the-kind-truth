@@ -1,0 +1,33 @@
+name: Queue health check
+
+# Every Friday: shout if the coming week has no approved posts.
+# Silent failure is the enemy of a daily channel.
+
+on:
+  schedule: [{ cron: "30 4 * * 5" }]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: check
+        run: |
+          STATUS=$(jq -r .status content/queue.json)
+          COUNT=$(jq '[.posts[]] | length' content/queue.json)
+          echo "status=$STATUS" >> $GITHUB_OUTPUT
+          echo "count=$COUNT"  >> $GITHUB_OUTPUT
+      - if: steps.check.outputs.status != 'approved' || steps.check.outputs.count == '0'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner, repo: context.repo.repo,
+              title: `⚠️ Next week's queue is not ready (status=${{ steps.check.outputs.status }}, posts=${{ steps.check.outputs.count }})`,
+              body: "The daily publisher will skip days until `content/queue.json` has `status: \"approved\"` and dated posts."
+            })

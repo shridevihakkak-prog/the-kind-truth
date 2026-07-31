@@ -1,0 +1,49 @@
+name: Render queue
+
+# Whenever the approved queue changes, re-render the images and commit them back.
+# This is what makes raw.githubusercontent.com able to serve a public image URL
+# to the Instagram Graph API.
+
+on:
+  push:
+    paths: ["content/queue.json", "config/brand.json", "scripts/render.py"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+
+      - name: Install deps
+        run: |
+          pip install -r requirements.txt
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-lora fonts-poppins || true
+
+      - name: Vendor fonts (deterministic across runners)
+        run: |
+          mkdir -p assets/fonts
+          [ -f assets/fonts/Lora-Variable.ttf ] || curl -sL -o assets/fonts/Lora-Variable.ttf \
+            https://github.com/google/fonts/raw/main/ofl/lora/Lora%5Bwght%5D.ttf
+          [ -f assets/fonts/Poppins-Medium.ttf ] || curl -sL -o assets/fonts/Poppins-Medium.ttf \
+            https://github.com/google/fonts/raw/main/ofl/poppins/Poppins-Medium.ttf
+          [ -f assets/fonts/Poppins-Bold.ttf ] || curl -sL -o assets/fonts/Poppins-Bold.ttf \
+            https://github.com/google/fonts/raw/main/ofl/poppins/Poppins-Bold.ttf
+
+      - name: Render
+        run: python3 scripts/render.py --queue content/queue.json --out assets/rendered
+
+      - name: Commit rendered images
+        run: |
+          git config user.name  "positivity-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add assets/ content/queue.json
+          git diff --staged --quiet || git commit -m "render: images for $(date +%F)"
+          git push
